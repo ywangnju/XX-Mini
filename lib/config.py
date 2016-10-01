@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# coding:utf-8
-
-
 import ConfigParser
 import os
 import re
@@ -9,7 +5,9 @@ import socket
 
 from xlog import getLogger
 xlog = getLogger("gae_proxy")
-from proxy_dir import current_path
+
+file_path = os.path.dirname(os.path.abspath(__file__))
+current_path = os.path.abspath(os.path.join(file_path, os.pardir))
 
 
 class Config(object):
@@ -25,7 +23,7 @@ class Config(object):
         if not os.path.isdir(self.DATA_PATH):
             self.DATA_PATH = current_path
 
-        # load ../../../data/manual.ini, set by manual
+        # load ../data/manual.ini, set by user
         self.MANUAL_LOADED = False
         self.CONFIG_MANUAL_FILENAME = os.path.abspath( os.path.join(self.DATA_PATH, 'manual.ini'))
         if os.path.isfile(self.CONFIG_MANUAL_FILENAME):
@@ -98,12 +96,8 @@ class Config(object):
         self.PROXY_USER = self.CONFIG.get('proxy', 'user')
         self.PROXY_PASSWD = self.CONFIG.get('proxy', 'passwd')
 
-        self.LOVE_ENABLE = self.CONFIG.getint('love', 'enable')
-        self.LOVE_TIP = self.CONFIG.get('love', 'tip').encode('utf8').decode('unicode-escape').split('|')
-
         self.USE_IPV6 = self.CONFIG.getint('google_ip', 'use_ipv6')
         self.max_links_per_ip = self.CONFIG.getint('google_ip', 'max_links_per_ip')
-        self.record_ip_history = self.CONFIG.getint('google_ip', 'record_ip_history')
 
         self.https_max_connect_thread = config.CONFIG.getint("connect_manager", "https_max_connect_thread")
         self.connect_interval = config.CONFIG.getint("connect_manager", "connect_interval")
@@ -113,7 +107,6 @@ class Config(object):
         self.log_scan = config.CONFIG.getint("system", "log_scan") if config.CONFIG.has_option("system", "log_scan") else False
 
         # change to True when finished import CA cert to browser
-        # launcher will wait import ready then open browser to show status, check update etc
         self.cert_import_ready = False
 
 

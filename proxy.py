@@ -1,39 +1,6 @@
-#!/usr/bin/env python2
 # coding:utf-8
-# Based on GAppProxy 2.0.0 by Du XiaoGang <dugang.2008@gmail.com>
-# Based on WallProxy 0.4.0 by Hust Moon <www.ehust@gmail.com>
-# Contributor:
-#      Phus Lu           <phus.lu@gmail.com>
-#      Hewig Xu          <hewigovens@gmail.com>
-#      Ayanamist Yang    <ayanamist@gmail.com>
-#      V.E.O             <V.E.O@tom.com>
-#      Max Lv            <max.c.lv@gmail.com>
-#      AlsoTang          <alsotang@gmail.com>
-#      Christopher Meng  <cickumqt@gmail.com>
-#      Yonsm Guo         <YonsmGuo@gmail.com>
-#      Parkman           <cseparkman@gmail.com>
-#      Ming Bai          <mbbill@gmail.com>
-#      Bin Yu            <yubinlove1991@gmail.com>
-#      lileixuan         <lileixuan@gmail.com>
-#      Cong Ding         <cong@cding.org>
-#      Zhang Youfu       <zhangyoufu@gmail.com>
-#      Lu Wei            <luwei@barfoo>
-#      Harmony Meow      <harmony.meow@gmail.com>
-#      logostream        <logostream@gmail.com>
-#      Rui Wang          <isnowfy@gmail.com>
-#      Wang Wei Qiang    <wwqgtxx@gmail.com>
-#      Felix Yan         <felixonmars@gmail.com>
-#      QXO               <qxodream@gmail.com>
-#      Geek An           <geekan@foxmail.com>
-#      Poly Rabbit       <mcx_221@foxmail.com>
-#      oxnz              <yunxinyi@gmail.com>
-#      Shusen Liu        <liushusen.smart@gmail.com>
-#      Yad Smood         <y.s.inside@gmail.com>
-#      Chen Shuang       <cs0x7f@gmail.com>
-#      cnfuyu            <cnfuyu@gmail.com>
-#      cuixin            <steven.cuixin@gmail.com>
 
-__version__ = '1.2.7'
+__version__ = '1.2.8'
 
 import sys
 import os
@@ -49,14 +16,14 @@ data_path = os.path.join(work_path, 'data')
 if not os.path.isdir(data_path): os.mkdir(data_path)
 
 # add python lib path
-sys.path.append(os.path.abspath( os.path.join(work_path, 'lib')))
+sys.path.append(work_path + '/lib')
 if sys.platform.startswith("linux"):
-    sys.path.append(work_path + '/lib.egg/lib/')
+    sys.path.append(work_path + '/lib.egg')
     # reduce resource request for threading, for OpenWrt
     import threading
     threading.stack_size(128*1024)
 elif sys.platform == "darwin":
-    sys.path.append(work_path + '/lib.egg/lib/')
+    sys.path.append(work_path + '/lib.egg')
 
 
 from config import config
@@ -174,10 +141,6 @@ def pre_start():
             ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
         else:
             ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 1)
-        if config.LOVE_ENABLE and random.randint(1, 100) <= 20:
-            title = ctypes.create_unicode_buffer(1024)
-            ctypes.windll.kernel32.GetConsoleTitleW(ctypes.byref(title), len(title)-1)
-            ctypes.windll.kernel32.SetConsoleTitleW('%s %s' % (title.value, random.choice(config.LOVE_TIP)))
         blacklist = {'360safe': False,
                      'QQProtect': False, }
         softwares = [k for k, v in blacklist.items() if v]

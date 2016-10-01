@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__author__ = 'moonshawdo@gamil.com'
-
 import re
 
 def ip_string_to_num(s):
@@ -15,7 +11,6 @@ def get_ip_maskc(ip_str):
 def ip_num_to_string(ip):
     """Convert 32-bit integer to dotted IPv4 address."""
     return ".".join(map(lambda n: str(ip >> n & 0xFF), [24, 16, 8, 0]))
-
 
 
 g_ip_check = re.compile(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$')

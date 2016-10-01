@@ -23,7 +23,7 @@
 * 在 XX-Mini 目录，输入 `python goagent-gtk.py` 可以显示系统托盘
 
 ### egg 文件打包方法：
-* 将lib文件夹和 `__genpy__.py` 打包成 lib.zip 压缩包
+* 将lib**文件夹下**的文件打包成 lib.zip 压缩包，记住不是打包lib文件夹！
 * 修改压缩包后缀 zip 为 egg 即可
 
 ### proxy.ini 配置文件说明：

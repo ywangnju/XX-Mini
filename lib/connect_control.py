@@ -1,4 +1,3 @@
-
 import time
 import threading
 import sys
@@ -11,7 +10,7 @@ xlog = getLogger("gae_proxy")
 # change to False when exit: system tray exit menu, or Ctrl+C in console
 # then GoAgent will quit
 # Every long running thread should check it and exit when False
-# gae_proxy/local/proxy.py will check 'keep_running' continuously in a loop
+# proxy.py will check 'keep_running' continuously in a loop
 # if gae_proxy wants to be up, 'keep_running' should NOT be False
 keep_running = True
 

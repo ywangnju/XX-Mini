@@ -1,16 +1,3 @@
-
-# OpenSSL is more stable then ssl
-# but OpenSSL is different then ssl, so need a wrapper
-
-# this wrap has a close callback.
-# Which is used by google ip manager(google_ip.py)
-# google ip manager keep a connection number counter for every ip.
-
-# the wrap is used to keep some attribute like ip/appid for ssl
-
-# __iowait and makefile is used for gevent but not use now.
-
-
 import sys
 import os
 import select
@@ -21,10 +8,11 @@ import errno
 import OpenSSL
 SSLError = OpenSSL.SSL.WantReadError
 
-from proxy_dir import current_path
-
 from xlog import getLogger
 xlog = getLogger("gae_proxy")
+
+file_path = os.path.dirname(os.path.abspath(__file__))
+current_path = os.path.abspath(os.path.join(file_path, os.pardir))
 
 ssl_version = ''
 openssl_version = OpenSSL.version.__version__

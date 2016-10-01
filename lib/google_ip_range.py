@@ -1,15 +1,14 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# Based on checkgoogleip by  <moonshawdo@gmail.com>
 import random
 import time
 import os
 import ip_utils
 from config import config
-from proxy_dir import current_path
 
 from xlog import getLogger
 xlog = getLogger("gae_proxy")
+
+file_path = os.path.dirname(os.path.abspath(__file__))
+current_path = os.path.abspath(os.path.join(file_path, os.pardir))
 
 random.seed(time.time()* 1000000)
 

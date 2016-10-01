@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding:utf-8
-
 import os
 import binascii
 import time
@@ -11,9 +8,11 @@ import operator
 import httplib
 import socks
 
-from proxy_dir import current_path
 from xlog import getLogger
 xlog = getLogger("gae_proxy")
+
+file_path = os.path.dirname(os.path.abspath(__file__))
+current_path = os.path.abspath(os.path.join(file_path, os.pardir))
 
 import OpenSSL
 SSLError = OpenSSL.SSL.WantReadError

@@ -1,23 +1,3 @@
-#!/usr/bin/env python
-# coding:utf-8
-
-
-"""
-This file manage the ssl connection dispatcher
-Include http/1.1 and http/2 workers.
-
-create ssl socket, then run worker on ssl.
-if ssl suppport http/2, run http/2 worker.
-
-provide simple https request block api.
- caller don't need to known ip/ssl/http2/appid.
-
-performance:
- get the fastest worker to process the request.
- sorted by rtt and pipeline task on load.
-"""
-
-
 import os
 import time
 import threading
@@ -35,7 +15,8 @@ import http_common
 from xlog import getLogger
 xlog = getLogger("gae_proxy")
 
-from proxy_dir import current_path
+file_path = os.path.dirname(os.path.abspath(__file__))
+current_path = os.path.abspath(os.path.join(file_path, os.pardir))
 g_cacertfile = os.path.join(current_path, "cacert.pem")
 
 

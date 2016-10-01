@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# based on checkgoogleip 'moonshawdo@gmail.com'
-
-
 import threading
 import operator
 import time
@@ -12,10 +7,11 @@ import check_local_network
 import check_ip
 import google_ip_range
 
-from proxy_dir import current_path
-
 from xlog import getLogger
 xlog = getLogger("gae_proxy")
+
+file_path = os.path.dirname(os.path.abspath(__file__))
+current_path = os.path.abspath(os.path.join(file_path, os.pardir))
 
 from config import config
 import connect_control
@@ -179,6 +175,7 @@ class IpManager():
                             property['handshake_time'],
                             property['fail_times'],
                             property['down_fail']) )
+                fd.flush()
 
             self.iplist_need_save = False
         except Exception as e:
@@ -267,10 +264,6 @@ class IpManager():
         except:
             return 9999
 
-    def append_ip_history(self, ip, info):
-        if config.record_ip_history:
-            self.ip_dict[ip]['history'].append([time.time(), info])
-
     # algorithm to get ip:
     # scan start from fastest ip
     # always use the fastest ip.
@@ -328,7 +321,6 @@ class IpManager():
 
                 handshake_time = self.ip_dict[ip]["handshake_time"]
                 xlog.debug("get ip:%s t:%d", ip, handshake_time)
-                self.append_ip_history(ip, "get")
                 self.ip_dict[ip]['get_time'] = time_now
                 self.ip_dict[ip]['links'] += 1
                 self.gws_ip_pointer += 1
@@ -358,7 +350,6 @@ class IpManager():
                     self.ip_dict[ip]['fail_time'] = 0
                     self.good_ip_num += 1
                     self.bad_ip_num -= 1
-                self.append_ip_history(ip, handshake_time)
                 return False
 
             self.iplist_need_save = True
@@ -416,7 +407,6 @@ class IpManager():
                     self.good_ip_num += 1
                     self.bad_ip_num -= 1
                 self.ip_dict[ip]['fail_times'] = 0
-                self.append_ip_history(ip, handshake_time)
                 self.ip_dict[ip]["fail_time"] = 0
 
                 self.iplist_need_save = True
@@ -469,7 +459,6 @@ class IpManager():
                 self.good_ip_num -= 1
                 self.bad_ip_num += 1
             self.ip_dict[ip]['fail_times'] += 1
-            self.append_ip_history(ip, "fail")
             self.ip_dict[ip]["fail_time"] = time_now
 
             self.to_check_ip_queue.put((ip, time_now + 10))
@@ -500,7 +489,6 @@ class IpManager():
                 self.bad_ip_num += 1
 
             self.ip_dict[ip]['down_fail'] += 1
-            self.append_ip_history(ip, reason)
             self.ip_dict[ip]["down_fail_time"] = time_now
             xlog.debug("ssl_closed %s", ip)
         except Exception as e:
@@ -515,7 +503,6 @@ class IpManager():
             if ip in self.ip_dict:
                 if self.ip_dict[ip]['links']:
                     self.ip_dict[ip]['links'] -= 1
-                    self.append_ip_history(ip, "C[%s]"%reason)
                     xlog.debug("ssl_closed %s", ip)
         except Exception as e:
             xlog.error("ssl_closed %s err:%s", ip, e)
@@ -638,7 +625,6 @@ class IpManager():
         self.scan_thread_lock.acquire()
         self.scan_thread_count -= 1
         self.scan_thread_lock.release()
-        xlog.info("scan_ip_worker exit")
 
     def search_more_google_ip(self):
         if config.USE_IPV6:
@@ -721,8 +707,3 @@ class IpManager():
                 self.report_connect_fail(ip, force_remove=True)
 
 google_ip = IpManager()
-
-if __name__ == "__main__":
-    google_ip.scan_all_exist_ip()
-    while True:
-        time.sleep(1)

@@ -1,22 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-port from hyper/http20/stream for async
-remove push support
-increase init window size to improve performance
-~~~~~~~~~~~~~~~~~~~
-
-Objects that make up the stream-level abstraction of hyper's HTTP/2 support.
-
-
-Conceptually, a single HTTP/2 connection is made up of many streams: each
-stream is an independent, bi-directional sequence of HTTP headers and data.
-Each stream is identified by a monotonically increasing integer, assigned to
-the stream by the endpoint that initiated the stream.
-"""
-
-
-
-
 from hyper.common.headers import HTTPHeaderMap
 from hyper.packages.hyperframe.frame import (
     FRAME_MAX_LEN, FRAMES, HeadersFrame, DataFrame, PushPromiseFrame,

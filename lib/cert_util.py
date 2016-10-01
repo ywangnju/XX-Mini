@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding:utf-8
-
 import os
 import sys
 import glob
@@ -21,8 +18,9 @@ from pyasn1.type import univ, constraint, char, namedtype, tag
 from pyasn1.codec.der.decoder import decode
 from pyasn1.error import PyAsn1Error
 from config import config
-from proxy_dir import current_path
 
+file_path = os.path.dirname(os.path.abspath(__file__))
+current_path = os.path.abspath(os.path.join(file_path, os.pardir))
 data_path = os.path.abspath(os.path.join(current_path, 'data'))
 if not os.path.isdir(data_path):
     data_path = current_path
@@ -489,14 +487,8 @@ class CertUtil(object):
             if serial_number != CertUtil.get_cert_serial_number(commonname):
                 any(os.remove(x) for x in certfiles)
         CertUtil.import_ca(CertUtil.ca_keyfile)
-        # change the status,
-        # web_control /cert_import_status will return True, else return False
-        # launcher will wait ready to open browser and check update
+        # change the status
         config.cert_import_ready = True
-
-
-if __name__ == '__main__':
-    CertUtil.init_ca()
 
 #TODO:
 # CA commaon should be GoAgent, vander should be XX-Mini
