@@ -16,7 +16,7 @@ data_path = os.path.join(work_path, 'data')
 if not os.path.isdir(data_path): os.mkdir(data_path)
 
 # add python lib path
-sys.path.append(work_path + '/lib')
+sys.path.insert(0, work_path + '/lib')
 if sys.platform.startswith("linux"):
     sys.path.append(work_path + '/lib.egg')
     # reduce resource request for threading, for OpenWrt
@@ -198,7 +198,7 @@ def terminate():
     xlog.info("start to terminate GAE_Proxy")
     connect_control.keep_running = False
     xlog.debug("## Set keep_running: %s", connect_control.keep_running)
-    sys.exit()
+    os._exit(0)
 
 
 if __name__ == '__main__':
