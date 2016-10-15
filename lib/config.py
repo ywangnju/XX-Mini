@@ -1,10 +1,13 @@
 import ConfigParser
 import os
 import re
+import sys
 import socket
 
 from xlog import getLogger
 xlog = getLogger("gae_proxy")
+
+from OpenSSL import version as openssl_version
 
 file_path = os.path.dirname(os.path.abspath(__file__))
 current_path = os.path.abspath(os.path.join(file_path, os.pardir))
@@ -103,6 +106,7 @@ class Config(object):
         self.connect_interval = config.CONFIG.getint("connect_manager", "connect_interval")
         self.max_worker_num = config.CONFIG.getint("connect_manager", "max_worker_num")
 
+        self.version = config.CONFIG.get("system", "version")
         self.log_file = config.CONFIG.getint("system", "log_file")
         self.log_scan = config.CONFIG.getint("system", "log_scan") if config.CONFIG.has_option("system", "log_scan") else False
 
@@ -113,7 +117,6 @@ class Config(object):
     @staticmethod
     def get_listen_ip():
         listen_ip = '127.0.0.1'
-        sock = None
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.connect(('8.8.8.8', 53))
@@ -124,6 +127,21 @@ class Config(object):
             if sock:
                 sock.close()
         return listen_ip
+
+
+    def summary(self):
+        pac_ip = self.get_listen_ip() if self.PAC_IP != '127.0.0.1' else self.PAC_IP
+        info  = '-'*80
+        info += '\nXX-Mini Version     : %s (python/%s pyopenssl/%s)\n' % (self.version, sys.version.split()[0], openssl_version.__version__)
+        info += 'Listen Address      : %s:%d\n' % (self.LISTEN_IP if self.LISTEN_IP == '127.0.0.1' else self.get_listen_ip(), self.LISTEN_PORT)
+        info += 'Setting File        : %sproxy.ini\n' % (self.MANUAL_LOADED + '/' if self.MANUAL_LOADED else '')
+        info += '%s Proxy %s : %s:%s\n' % (self.PROXY_TYPE, ' '*(12-len(self.PROXY_TYPE)), self.PROXY_HOST, self.PROXY_PORT) if self.PROXY_ENABLE else ''
+        info += 'GAE APPID           : %s\n' % 'Proud to Use My APPID' if self.GAE_APPIDS else 'Using Public APPID'
+        info += 'Pac Server          : http://%s:%d/%s\n' % (pac_ip, self.PAC_PORT, self.PAC_FILE) if self.PAC_ENABLE else ''
+        info += 'CA File             : http://%s:%d/%s\n' % (pac_ip, self.PAC_PORT, 'CA.crt') if self.PAC_ENABLE else ''
+        info += 'Pac File            : file://%s\n' % os.path.abspath(os.path.join(self.DATA_PATH , self.PAC_FILE)) if self.PAC_ENABLE else ''
+        info += '-'*80
+        return info
 
 
 config = Config()

@@ -59,6 +59,7 @@ class GAEProxyHandler(simple_http_server.HttpServerHandler):
     gae_support_methods = tuple(["GET", "POST", "HEAD", "PUT", "DELETE", "PATCH"])
     bufsize = 256*1024
     max_retry = 3
+    local_names = ['localhost', config.get_listen_ip()]
 
     if config.LISTEN_USERNAME:
         handler_filters = AuthFilter(config.LISTEN_USERNAME, config.LISTEN_PASSWORD)
@@ -135,6 +136,17 @@ class GAEProxyHandler(simple_http_server.HttpServerHandler):
 
         self.wfile.write(response)
 
+    def is_local(self, hosts):
+        for s in hosts:
+            s = s.lower()
+            if s.startswith('127.') \
+                    or s.startswith('10.') \
+                    or s.startswith('192.168.') \
+                    or s.startswith('169.254.') \
+                    or s in self.local_names:
+                return True
+        return False
+
     def do_METHOD(self):
         touch_active()
         # record active time.
@@ -143,18 +155,16 @@ class GAEProxyHandler(simple_http_server.HttpServerHandler):
         host = self.headers.get('Host', '')
         host_ip, _, port = host.rpartition(':')
         if host_ip == "127.0.0.1" and port == str(config.LISTEN_PORT):
-            return self.wfile.write(('HTTP/1.1 301\r\nContent-Length: 0\r\n\r\n').encode())
+            data = config.summary()
+            self.wfile.write(('HTTP/1.1 200\r\nContent-Type: text/plain\r\nContent-Length: %s\r\n\r\n' % len(data)).encode())
+            return self.wfile.write(data)
 
         if self.path[0] == '/' and host:
             self.path = 'http://%s%s' % (host, self.path)
         elif not host and '://' in self.path:
             host = urlparse.urlparse(self.path).netloc
 
-        if host.startswith("127.0.0.1") or host.startswith("localhost"):
-            #xlog.warn("Your browser forward localhost to proxy.")
-            return self.forward_local()
-
-        if host_ip == config.get_listen_ip():
+        if self.is_local([host, host_ip]):
             xlog.info("Browse localhost by proxy")
             return self.forward_local()
 
