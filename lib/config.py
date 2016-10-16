@@ -136,7 +136,7 @@ class Config(object):
         info += 'Listen Address      : %s:%d\n' % (self.LISTEN_IP if self.LISTEN_IP == '127.0.0.1' else self.get_listen_ip(), self.LISTEN_PORT)
         info += 'Setting File        : %sproxy.ini\n' % (self.MANUAL_LOADED + '/' if self.MANUAL_LOADED else '')
         info += '%s Proxy %s : %s:%s\n' % (self.PROXY_TYPE, ' '*(12-len(self.PROXY_TYPE)), self.PROXY_HOST, self.PROXY_PORT) if self.PROXY_ENABLE else ''
-        info += 'GAE APPID           : %s\n' % 'Proud to Use My APPID' if self.GAE_APPIDS else 'Using Public APPID'
+        info += 'GAE APPID           : %s\n' % ('Proud to Use My APPID' if self.GAE_APPIDS else 'Using Public APPID')
         info += 'Pac Server          : http://%s:%d/%s\n' % (pac_ip, self.PAC_PORT, self.PAC_FILE) if self.PAC_ENABLE else ''
         info += 'CA File             : http://%s:%d/%s\n' % (pac_ip, self.PAC_PORT, 'CA.crt') if self.PAC_ENABLE else ''
         info += 'Pac File            : file://%s\n' % os.path.abspath(os.path.join(self.DATA_PATH , self.PAC_FILE)) if self.PAC_ENABLE else ''
