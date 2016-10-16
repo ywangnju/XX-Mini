@@ -307,7 +307,7 @@ class Https_connection_manager(object):
     def connect_process(self):
         try:
             ip_str = google_ip.get_gws_ip()
-            if not ip_str:
+            if not ip_str or ip_str == 404:
                 time.sleep(60)
                 # xlog.warning("no enough ip")
                 return
@@ -354,8 +354,9 @@ class Https_connection_manager(object):
                     break
 
                 ip_str = google_ip.get_gws_ip()
-                if not ip_str:
-                    xlog.warning("no enough ip")
+                if not ip_str or ip_str == 404:
+                    if ip_str != 404:
+                        xlog.warning("no enough ip")
                     time.sleep(60)
                     break
 

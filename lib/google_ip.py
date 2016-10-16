@@ -271,6 +271,9 @@ class IpManager():
     # if the ip is fail in 60 seconds, try next ip;
     # reset pointer to front every 3 seconds
     def get_gws_ip(self):
+        if not check_local_network.is_ok():
+            return 404
+
         self.try_sort_gws_ip()
 
         self.ip_lock.acquire()
