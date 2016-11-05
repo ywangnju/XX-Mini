@@ -125,7 +125,7 @@ class HttpServerHandler():
 
             self.parse_request()
 
-            if self.handler_filters:
+            if self.handler_filters and self.command != "GET":
                 action = self.handler_filters.filter(self)
                 if action:
                     return self.send_response('', **action)
